@@ -2,14 +2,113 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Math Tools</title>
+    <title>Basic Math Review for FEM</title>
     <link rel="stylesheet" href="style.css">
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f0f8ff;
+    }
+    h1, h2, h3 {
+        color: #2c3e50;
+    }
+    .matrix-container {
+        width: 100%;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        margin: 20px 0;
+        padding: 10px;
+        overflow-x: auto;
+    }
+    .interactive-demo {
+        background-color: #e0f7fa;
+        padding: 20px;
+        border-radius: 10px;
+        margin-top: 30px;
+    }
+    button {
+        background-color: #3498db;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        cursor: pointer;
+        font-size: 16px;
+        border-radius: 5px;
+        margin: 5px;
+    }
+    button:hover {
+        background-color: #2980b9;
+    }
+    input[type="number"] {
+        width: 50px;
+        padding: 5px;
+        font-size: 16px;
+    }
+    .math-formula {
+        font-family: "Times New Roman", Times, serif;
+        font-style: italic;
+        background-color: #f9f9f9;
+        padding: 5px;
+        border-radius: 5px;
+    }
+    .calculation-steps {
+        background-color: #fff;
+        border: 1px solid #ddd;
+        padding: 10px;
+        margin-top: 10px;
+        border-radius: 5px;
+    }
+    .step {
+        margin-bottom: 10px;
+    }
+    .important-note {
+        background-color: #ffe0b2;
+        border-left: 5px solid #ff9800;
+        padding: 10px;
+        margin: 20px 0;
+        font-weight: bold;
+        font-weight: bold;
+    }
+    .zero-matrix-note {
+        background-color: #e8f5e9;
+        border-left: 5px solid #4caf50;
+        padding: 10px;
+        margin: 10px 0;
+    }
+    .properties-section {
+        background-color: #e3f2fd;
+        border: 1px solid #bbdefb;
+        padding: 15px;
+        margin: 20px 0;
+        border-radius: 5px;
+    }
+    .property {
+        margin-bottom: 15px;
+    }
+    .property-name {
+        font-weight: bold;
+        color: #1565c0;
+    }
+    table {
+        border-collapse: collapse;
+        margin: 10px 0;
+    }
+    td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: center;
+    }
+</style>
     <script type="importmap">
         {
             "imports": {}
         }
     </script>
-    <script type="module" src="script.js"></script>
 </head>
 <body>
     <header>
@@ -28,28 +127,688 @@
     <main>
         <section id="vectors" class="tab-content active">
             <h2>Vectors</h2>
-            <p>Content for Vectors will go here.</p>
+    <p>A vector in n-dimensional space is an ordered collection of n numbers. We denote vectors using curly braces { }. For an n-dimensional vector {a}, we write:</p>
+    <p class="math-formula">{a} = {a₁, a₂, ..., aₙ}</p>
+    <p>where a₁, a₂, ..., aₙ are the components of the vector {a}.</p>
+
+    <h2>The Zero Vector</h2>
+    <p>The zero vector, denoted as {0}, is a special vector where all components are zero:</p>
+    <p class="math-formula">{0} = {0, 0, ..., 0}</p>
+    <p>The zero vector plays a crucial role in vector operations, as we'll see below.</p>
+
+    <h2>Vector Operations</h2>
+
+    <div class="important-note">
+        Note: Vector operations such as addition, subtraction, and scalar multiplication are only permitted for vectors of the same dimension.
+    </div>
+
+    <h3>1. Vector Addition</h3>
+    <p>For two vectors {a} and {b} in n-dimensional space, their sum {c} = {a} + {b} is defined as:</p>
+    <p class="math-formula">{c} = {a₁+b₁, a₂+b₂, ..., aₙ+bₙ}</p>
+
+    <div class="zero-vector-note">
+        If one of the vectors is the zero vector, e.g., {b} = {0}, then:
+        <p class="math-formula">{a} + {0} = {a}</p>
+        Adding the zero vector to any vector results in the same vector.
+    </div>
+
+    <h3>2. Vector Subtraction</h3>
+    <p>For two vectors {a} and {b} in n-dimensional space, their difference {d} = {a} - {b} is defined as:</p>
+    <p class="math-formula">{d} = {a₁-b₁, a₂-b₂, ..., aₙ-bₙ}</p>
+
+    <div class="zero-vector-note">
+        If one of the vectors is the zero vector, e.g., {b} = {0}, then:
+        <p class="math-formula">{a} - {0} = {a}</p>
+        Subtracting the zero vector from any vector results in the same vector.
+    </div>
+
+    <h3>3. Scalar Multiplication</h3>
+    <p>For a vector {a} and a scalar k, their product {p} = k{a} is defined as:</p>
+    <p class="math-formula">{p} = {ka₁, ka₂, ..., kaₙ}</p>
+
+    <div class="zero-vector-note">
+        If the vector is the zero vector, i.e., {a} = {0}, then for any scalar k:
+        <p class="math-formula">k{0} = {0}</p>
+        Multiplying the zero vector by any scalar results in the zero vector.
+    </div>
+
+    <h3>4. Dot Product</h3>
+    <p>For two vectors {a} and {b} in n-dimensional space, their dot product is a scalar defined as:</p>
+    <p class="math-formula">{a} · {b} = a₁b₁ + a₂b₂ + ... + aₙbₙ</p>
+
+    <div class="zero-vector-note">
+        If one of the vectors is the zero vector, e.g., {b} = {0}, then:
+        <p class="math-formula">{a} · {0} = 0</p>
+        The dot product of any vector with the zero vector is always zero.
+    </div>
+
+    <h3>5. Vector Norm (Magnitude)</h3>
+    <p>The norm or magnitude of a vector {a}, denoted as ||{a}||, is defined as:</p>
+    <p class="math-formula">||{a}|| = √(a₁² + a₂² + ... + aₙ²)</p>
+
+    <div class="zero-vector-note">
+        For the zero vector {0}:
+        <p class="math-formula">||{0}|| = 0</p>
+        The norm of the zero vector is always zero.
+    </div>
+
+    <h2>Properties of Vector Operations</h2>
+    <div class="properties-section">
+        <p>Vector operations have several important properties. Let {a}, {b}, and {c} be vectors in n-dimensional space, and k and m be scalars:</p>
+
+        <div class="property">
+            <p class="property-name">1. Commutativity of Addition:</p>
+            <p class="math-formula">{a} + {b} = {b} + {a}</p>
+        </div>
+
+        <div class="property">
+            <p class="property-name">2. Associativity of Addition:</p>
+            <p class="math-formula">({a} + {b}) + {c} = {a} + ({b} + {c})</p>
+        </div>
+
+        <div class="property">
+            <p class="property-name">3. Additive Identity:</p>
+            <p class="math-formula">{a} + {0} = {a}</p>
+        </div>
+
+        <div class="property">
+            <p class="property-name">4. Additive Inverse:</p>
+            <p class="math-formula">{a} + (-{a}) = {0}</p>
+        </div>
+
+        <div class="property">
+            <p class="property-name">5. Distributivity of Scalar Multiplication over Vector Addition:</p>
+            <p class="math-formula">k({a} + {b}) = k{a} + k{b}</p>
+        </div>
+
+        <div class="property">
+            <p class="property-name">6. Distributivity of Vector Addition over Scalar Multiplication:</p>
+            <p class="math-formula">(k + m){a} = k{a} + m{a}</p>
+        </div>
+
+        <div class="property">
+            <p class="property-name">7. Associativity of Scalar Multiplication:</p>
+            <p class="math-formula">k(m{a}) = (km){a}</p>
+        </div>
+
+        <div class="property">
+            <p class="property-name">8. Scalar Multiplication Identity:</p>
+            <p class="math-formula">1{a} = {a}</p>
+        </div>
+
+        <div class="property">
+            <p class="property-name">9. Distributivity of Dot Product over Addition:</p>
+            <p class="math-formula">{a} · ({b} + {c}) = {a} · {b} + {a} · {c}</p>
+        </div>
+
+        <div class="property">
+            <p class="property-name">10. Commutativity of Dot Product:</p>
+            <p class="math-formula">{a} · {b} = {b} · {a}</p>
+        </div>
+
+        <div class="property">
+            <p class="property-name">11. Scalar Multiplication and Dot Product:</p>
+            <p class="math-formula">(k{a}) · {b} = k({a} · {b}) = {a} · (k{b})</p>
+        </div>
+
+        <div class="property">
+            <p class="property-name">12. Norm and Scalar Multiplication:</p>
+            <p class="math-formula">||k{a}|| = |k| ||{a}||</p>
+        </div>
+    </div>
+
+    <h2>Interactive Vector Operations Demo</h2>
+    <div class="interactive-demo">
+        <label for="dimension-input">Enter the dimension of the vectors: </label>
+        <input type="number" id="dimension-input" min="1" max="10" value="3">
+        <button onclick="generateVectors()">Generate Vectors</button>
+        <div id="vector-display"></div>
+        <button onclick="addVectors()">Add Vectors</button>
+        <button onclick="subtractVectors()">Subtract Vectors</button>
+        <button onclick="multiplyByScalar()">Multiply by Scalar</button>
+        <button onclick="calculateDotProduct()">Calculate Dot Product</button>
+        <button onclick="calculateNorm()">Calculate Norm</button>
+        <div id="result-display"></div>
+        <div class="calculation-steps" id="calculation-steps"></div>
+    </div>
+
+
+
         </section>
 
         <section id="matrices" class="tab-content">
             <h2>Matrices</h2>
-            <p>Content for Matrices will go here.</p>
+    <h2>Introduction to Matrices</h2>
+    <p>A matrix is a rectangular array of numbers, symbols, or expressions arranged in rows and columns. We denote matrices using capital letters enclosed in curly braces. For an m × n matrix {A}, we write:</p>
+    <div class="math-formula">
+        {A} = 
+        <table>
+            <tr>
+                <td>a₁₁</td><td>a₁₂</td><td>...</td><td>a₁ₙ</td>
+            </tr>
+            <tr>
+                <td>a₂₁</td><td>a₂₂</td><td>...</td><td>a₂ₙ</td>
+            </tr>
+            <tr>
+                <td>...</td><td>...</td><td>...</td><td>...</td>
+            </tr>
+            <tr>
+                <td>aₘ₁</td><td>aₘ₂</td><td>...</td><td>aₘₙ</td>
+            </tr>
+        </table>
+    </div>
+    <p>where aᵢⱼ represents the element in the i-th row and j-th column of {A}.</p>
+
+    <h2>The Zero Matrix</h2>
+    <p>The zero matrix, denoted as {0}, is a special matrix where all elements are zero:</p>
+    <div class="math-formula">
+        {0} = 
+        <table>
+            <tr>
+                <td>0</td><td>0</td><td>...</td><td>0</td>
+            </tr>
+            <tr>
+                <td>0</td><td>0</td><td>...</td><td>0</td>
+            </tr>
+            <tr>
+                <td>...</td><td>...</td><td>...</td><td>...</td>
+            </tr>
+            <tr>
+                <td>0</td><td>0</td><td>...</td><td>0</td>
+            </tr>
+        </table>
+    </div>
+    <p>The zero matrix plays a crucial role in matrix operations, as we'll see below.</p>
+
+    <h2>Matrix Operations</h2>
+
+    <div class="important-note">
+        Note: Matrix operations such as addition and multiplication are only permitted for matrices of compatible dimensions.
+    </div>
+
+    <h3>1. Matrix Addition</h3>
+    <p>For two matrices {A} and {B} of the same dimensions (m × n), their sum {C} = {A} + {B} is defined as:</p>
+    <p class="math-formula">cᵢⱼ = aᵢⱼ + bᵢⱼ for all i and j</p>
+
+    <div class="zero-matrix-note">
+        If one of the matrices is the zero matrix, e.g., {B} = {0}, then:
+        <p class="math-formula">{A} + {0} = {A}</p>
+        Adding the zero matrix to any matrix results in the same matrix.
+    </div>
+
+    <h3>2. Matrix Subtraction</h3>
+    <p>For two matrices {A} and {B} of the same dimensions (m × n), their difference {D} = {A} - {B} is defined as:</p>
+    <p class="math-formula">dᵢⱼ = aᵢⱼ - bᵢⱼ for all i and j</p>
+
+    <div class="zero-matrix-note">
+        If one of the matrices is the zero matrix, e.g., {B} = {0}, then:
+        <p class="math-formula">{A} - {0} = {A}</p>
+        Subtracting the zero matrix from any matrix results in the same matrix.
+    </div>
+
+    <h3>3. Scalar Multiplication</h3>
+    <p>For a matrix {A} and a scalar k, their product {P} = k{A} is defined as:</p>
+    <p class="math-formula">pᵢⱼ = k * aᵢⱼ for all i and j</p>
+
+    <div class="zero-matrix-note">
+        If the matrix is the zero matrix, i.e., {A} = {0}, then for any scalar k:
+        <p class="math-formula">k{0} = {0}</p>
+        Multiplying the zero matrix by any scalar results in the zero matrix.
+    </div>
+
+    <h3>4. Matrix Multiplication</h3>
+    <p>For an m × n matrix {A} and an n × p matrix {B}, their product {C} = {A}{B} is an m × p matrix defined as:</p>
+    <p class="math-formula">cᵢⱼ = Σ(k=1 to n) aᵢₖ * bₖⱼ for all i and j</p>
+
+    <div class="zero-matrix-note">
+        If one of the matrices is the zero matrix, e.g., {B} = {0}, then:
+        <p class="math-formula">{A}{0} = {0} and {0}{A} = {0}</p>
+        Multiplying any matrix by the zero matrix results in the zero matrix.
+    </div>
+
+    <h3>5. Matrix Transpose</h3>
+    <p>The transpose of an m × n matrix {A}, denoted as {A}ᵀ, is an n × m matrix where:</p>
+    <p class="math-formula">({A}ᵀ)ᵢⱼ = aⱼᵢ for all i and j</p>
+
+    <div class="zero-matrix-note">
+        For the zero matrix {0}:
+        <p class="math-formula">{0}ᵀ = {0}</p>
+        The transpose of the zero matrix is the zero matrix.
+    </div>
+
+    <h2>Properties of Matrix Operations</h2>
+    <div class="properties-section">
+        <p>Matrix operations have several important properties. Let {A}, {B}, and {C} be matrices of compatible dimensions, and k and m be scalars:</p>
+
+        <div class="property">
+            <p class="property-name">1. Commutativity of Addition:</p>
+            <p class="math-formula">{A} + {B} = {B} + {A}</p>
+        </div>
+
+        <div class="property">
+            <p class="property-name">2. Associativity of Addition:</p>
+            <p class="math-formula">({A} + {B}) + {C} = {A} + ({B} + {C})</p>
+        </div>
+
+        <div class="property">
+            <p class="property-name">3. Additive Identity:</p>
+            <p class="math-formula">{A} + {0} = {A}</p>
+        </div>
+
+        <div class="property">
+            <p class="property-name">4. Additive Inverse:</p>
+            <p class="math-formula">{A} + (-{A}) = {0}</p>
+        </div>
+
+        <div class="property">
+            <p class="property-name">5. Distributivity of Scalar Multiplication over Matrix Addition:</p>
+            <p class="math-formula">k({A} + {B}) = k{A} + k{B}</p>
+        </div>
+
+        <div class="property">
+            <p class="property-name">6. Distributivity of Matrix Addition over Scalar Multiplication:</p>
+            <p class="math-formula">(k + m){A} = k{A} + m{A}</p>
+        </div>
+
+        <div class="property">
+            <p class="property-name">7. Associativity of Scalar Multiplication:</p>
+            <p class="math-formula">k(m{A}) = (km){A}</p>
+        </div>
+
+        <div class="property">
+            <p class="property-name">8. Scalar Multiplication Identity:</p>
+            <p class="math-formula">1{A} = {A}</p>
+        </div>
+
+        <div class="property">
+            <p class="property-name">9. Distributivity of Matrix Multiplication over Addition:</p>
+            <p class="math-formula">{A}({B} + {C}) = {A}{B} + {A}{C} and ({B} + {C}){A} = {B}{A} + {C}{A}</p>
+        </div>
+
+        <div class="property">
+            <p class="property-name">10. Associativity of Matrix Multiplication:</p>
+            <p class="math-formula">({A}{B}){C} = {A}({B}{C})</p>
+        </div>
+
+        <div class="property">
+            <p class="property-name">11. Non-commutativity of Matrix Multiplication:</p>
+            <p class="math-formula">{A}{B} ≠ {B}{A} (in general)</p>
+        </div>
+
+        <div class="property">
+            <p class="property-name">12. Transpose of Sum:</p>
+            <p class="math-formula">({A} + {B})ᵀ = {A}ᵀ + {B}ᵀ</p>
+        </div>
+
+        <div class="property">
+            <p class="property-name">13. Transpose of Product:</p>
+            <p class="math-formula">({A}{B})ᵀ = {B}ᵀ{A}ᵀ</p>
+        </div>
+
+        <div class="property">
+            <p class="property-name">14. Transpose of Scalar Multiple:</p>
+            <p class="math-formula">(k{A})ᵀ = k{A}ᵀ</p>
+        </div>
+    </div>
+
+    <h2>Interactive Matrix Operations Demo</h2>
+    <div class="interactive-demo">
+        <div>
+            <label for="rows-a">Rows for Matrix {A}: </label>
+            <input type="number" id="rows-a" min="1" max="5" value="2">
+            <label for="cols-a">Columns for Matrix {A}: </label>
+            <input type="number" id="cols-a" min="1" max="5" value="2">
+        </div>
+        <div>
+            <label for="rows-b">Rows for Matrix {B}: </label>
+            <input type="number" id="rows-b" min="1" max="5" value="2">
+            <label for="cols-b">Columns for Matrix {B}: </label>
+            <input type="number" id="cols-b" min="1" max="5" value="2">
+        </div>
+        <button onclick="generateMatrices()">Generate Matrices</button>
+        <div id="matrix-display"></div>
+        <button onclick="addMatrices()">Add Matrices</button>
+        <button onclick="subtractMatrices()">Subtract Matrices</button>
+        <button onclick="multiplyByScalarM()">Multiply by Scalar</button>
+        <button onclick="multiplyMatrices()">Multiply Matrices</button>
+        <button onclick="transposeMatrix()">Transpose Matrix {A}</button>
+        <div id="result-displayM"></div>
+        <div class="calculation-steps" id="calculation-stepsM"></div>
+    </div>
+
+    <script>
+        let matrixA, matrixB;
+
+        function generateMatrices() {
+			document.getElementById('calculation-stepsM').innerHTML = '';
+			document.getElementById('result-display').innerHTML = ''
+            const rowsA = parseInt(document.getElementById('rows-a').value);
+            const colsA = parseInt(document.getElementById('cols-a').value);
+            const rowsB = parseInt(document.getElementById('rows-b').value);
+            const colsB = parseInt(document.getElementById('cols-b').value);
+
+            matrixA = Array.from({length: rowsA}, () => 
+                Array.from({length: colsA}, () => Math.floor(Math.random() * 10) - 5)
+            );
+            matrixB = Array.from({length: rowsB}, () => 
+                Array.from({length: colsB}, () => Math.floor(Math.random() * 10) - 5)
+            );
+
+            displayMatrices();
+        }
+
+        function displayMatrices() {
+            const matrixDisplay = document.getElementById('matrix-display');
+            matrixDisplay.innerHTML = `
+                <h3>Matrix {A}:</h3>
+                ${matrixToHtml(matrixA)}
+                <h3>Matrix {B}:</h3>
+                ${matrixToHtml(matrixB)}
+            `;
+        }
+
+        function matrixToHtml(matrix) {
+            return `
+                <table>
+                    ${matrix.map(row => `
+                        <tr>${row.map(cell => `<td>${cell}</td>`).join('')}</tr>
+                    `).join('')}
+                </table>
+            `;
+        }
+
+        function addMatrices() {
+            if (!matrixA || !matrixB || matrixA.length !== matrixB.length || matrixA[0].length !== matrixB[0].length) {
+                alert('Matrices must have the same dimensions for addition.');
+                return;
+            }
+            const result = matrixA.map((row, i) =>
+                row.map((cell, j) => cell + matrixB[i][j])
+            );
+            displayResultM('{A} + {B}', result);
+            displayCalculationStepsM('Addition', matrixA, matrixB, result);
+        }
+
+        function subtractMatrices() {
+            if (!matrixA || !matrixB || matrixA.length !== matrixB.length || matrixA[0].length !== matrixB[0].length) {
+                alert('Matrices must have the same dimensions for subtraction.');
+                return;
+            }
+            const result = matrixA.map((row, i) =>
+                row.map((cell, j) => cell - matrixB[i][j])
+            );
+            displayResultM('{A} - {B}', result);
+            displayCalculationStepsM('Subtraction', matrixA, matrixB, result);
+        }
+
+        function multiplyByScalarM() {
+            if (!matrixA) {
+                alert('Please generate matrices first.');
+                return;
+            }
+            const scalar = parseFloat(prompt('Enter a scalar value:'));
+            if (isNaN(scalar)) {
+                alert('Please enter a valid number.');
+                return;
+            }
+            const result = matrixA.map(row =>
+                row.map(cell => cell * scalar)
+            );
+            displayResultM(`${scalar}{A}`, result);
+            displayCalculationStepsM('Scalar Multiplication', matrixA, [scalar], result);
+        }
+
+        function multiplyMatrices() {
+            if (!matrixA || !matrixB || matrixA[0].length !== matrixB.length) {
+                alert('Number of columns in {A} must equal number of rows in {B} for matrix multiplication.');
+                return;
+            }
+            const result = matrixA.map((row, i) =>
+                matrixB[0].map((_, j) =>
+                    row.reduce((sum, cell, k) => sum + cell * matrixB[k][j], 0)
+                )
+            );
+            displayResultM('{A}{B}', result);
+            displayCalculationStepsM('Matrix Multiplication', matrixA, matrixB, result);
+        }
+
+        function transposeMatrix() {
+            if (!matrixA) {
+                alert('Please generate matrices first.');
+                return;
+            }
+            const result = matrixA[0].map((_, i) =>
+                matrixA.map(row => row[i])
+            );
+            displayResultM('{A}ᵀ', result);
+            displayCalculationSteps('TransposeM', matrixA, null, result);
+        }
+
+        function displayResultM(operation, result) {
+            const resultDisplay = document.getElementById('result-displayM');
+            resultDisplay.innerHTML = `
+                <h3>${operation}:</h3>
+                ${matrixToHtml(result)}
+            `;
+        }
+
+        function displayCalculationStepsM(operation, matrix1, matrix2, result) {
+            const stepsDisplay = document.getElementById('calculation-stepsM');
+            let steps = `<h3>${operation} Calculation Steps:</h3>`;
+
+            switch (operation) {
+                case 'Addition':
+                case 'Subtraction':
+                    steps += matrix1.map((row, i) =>
+                        row.map((cell, j) =>
+                            `<div class="step">(${i+1},${j+1}): ${cell} ${operation === 'Addition' ? '+' : '-'} ${matrix2[i][j]} = ${result[i][j]}</div>`
+                        ).join('')
+                    ).join('');
+                    break;
+                case 'Scalar Multiplication':
+                    steps += matrix1.map((row, i) =>
+                        row.map((cell, j) =>
+                            `<div class="step">(${i+1},${j+1}): ${matrix2[0]} * ${cell} = ${result[i][j]}</div>`
+                        ).join('')
+                    ).join('');
+                    break;
+                case 'Matrix Multiplication':
+                    steps += result.map((row, i) =>
+                        row.map((cell, j) => {
+                            let stepCalc = `<div class="step">(${i+1},${j+1}): `;
+                            stepCalc += matrix1[i].map((_, k) =>
+                                `(${matrix1[i][k]} * ${matrix2[k][j]})`
+                            ).join(' + ');
+                            stepCalc += ` = ${cell}</div>`;
+                            return stepCalc;
+                        }).join('')
+                    ).join('');
+                    break;
+                case 'Transpose':
+                    steps += result.map((row, i) =>
+                        row.map((cell, j) =>
+                            `<div class="step">(${i+1},${j+1}) of {A}ᵀ = (${j+1},${i+1}) of {A} = ${cell}</div>`
+                        ).join('')
+                    ).join('');
+                    break;
+            }
+
+            stepsDisplay.innerHTML = steps;
+        }
+    </script>
+
         </section>
 
         <section id="interpolation" class="tab-content">
             <h2>Interpolation</h2>
-            <p>Content for Interpolation will go here.</p>
+            <p>Content will be added.</p>
         </section>
 
         <section id="differentiation" class="tab-content">
             <h2>Differentiation</h2>
-            <p>Content for Differentiation will go here.</p>
+            <p>Content will be added.</p>
         </section>
 
         <section id="integration" class="tab-content">
             <h2>Integration</h2>
-            <p>Content for Integration will go here.</p>
+            <p>Content will be added.</p>
         </section>
     </main>
+    <script>
+        let vectorA, vectorB;
+
+        function generateVectors() {
+			document.getElementById('calculation-steps').innerHTML = '';  
+			document.getElementById('result-display').innerHTML = ''
+            const dimension = parseInt(document.getElementById('dimension-input').value);
+            vectorA = Array.from({length: dimension}, () => Math.floor(Math.random() * 10) - 5);
+            vectorB = Array.from({length: dimension}, () => Math.floor(Math.random() * 10) - 5);
+            displayVectors();
+        }
+
+        function displayVectors() {
+            const vectorDisplay = document.getElementById('vector-display');
+            vectorDisplay.innerHTML = `
+                <p>Vector A: {${vectorA.join(', ')}}</p>
+                <p>Vector B: {${vectorB.join(', ')}}</p>
+            `;
+        }
+
+        function addVectors() {
+            if (!vectorA || !vectorB) {
+                alert('Please generate vectors first.');
+                return;
+            }
+            const result = vectorA.map((a, i) => a + vectorB[i]);
+            displayResult('A + B', result);
+            displayCalculationSteps('Addition', vectorA, vectorB, result);
+        }
+
+        function subtractVectors() {
+            if (!vectorA || !vectorB) {
+                alert('Please generate vectors first.');
+                return;
+            }
+            const result = vectorA.map((a, i) => a - vectorB[i]);
+            displayResult('A - B', result);
+            displayCalculationSteps('Subtraction', vectorA, vectorB, result);
+        }
+
+        function multiplyByScalar() {
+            if (!vectorA) {
+                alert('Please generate vectors first.');
+                return;
+            }
+            const scalar = parseFloat(prompt('Enter a scalar value:'));
+            if (isNaN(scalar)) {
+                alert('Please enter a valid number.');
+                return;
+            }
+            const result = vectorA.map(a => a * scalar);
+            displayResult(`${scalar} * A`, result);
+            displayCalculationSteps('Scalar Multiplication', vectorA, [scalar], result);
+        }
+
+        function calculateDotProduct() {
+            if (!vectorA || !vectorB) {
+                alert('Please generate vectors first.');
+                return;
+            }
+            const result = vectorA.reduce((sum, a, i) => sum + a * vectorB[i], 0);
+            displayResult('A · B', [result]);
+            displayCalculationSteps('Dot Product', vectorA, vectorB, [result]);
+        }
+
+        function calculateNorm() {
+            if (!vectorA) {
+                alert('Please generate vectors first.');
+                return;
+            }
+            const result = Math.sqrt(vectorA.reduce((sum, a) => sum + a * a, 0));
+            displayResult('||A||', [result]);
+            displayCalculationSteps('Norm', vectorA, null, [result]);
+        }
+
+        function displayResult(operation, result) {
+            const resultDisplay = document.getElementById('result-display');
+            resultDisplay.innerHTML = `<p>${operation} = {${result.join(', ')}}</p>`;
+        }
+
+        function displayCalculationSteps(operation, vec1, vec2, result) {
+            const stepsDisplay = document.getElementById('calculation-steps');
+            let steps = `<h3>${operation} Calculation Steps:</h3>`;
+
+            switch (operation) {
+                case 'Addition':
+                case 'Subtraction':
+                    steps += vec1.map((v, i) => `<div class="step">Step ${i + 1}: ${v} ${operation === 'Addition' ? '+' : '-'} ${vec2[i]} = ${result[i]}</div>`).join('');
+                    break;
+                case 'Scalar Multiplication':
+                    steps += vec1.map((v, i) => `<div class="step">Step ${i + 1}: ${vec2[0]} * ${v} = ${result[i]}</div>`).join('');
+                    break;
+                case 'Dot Product':
+                    steps += vec1.map((v, i) => `<div class="step">Step ${i + 1}: ${v} * ${vec2[i]} = ${v * vec2[i]}</div>`).join('');
+                    steps += `<div class="step">Final Step: Sum of products = ${result[0]}</div>`;
+                    break;
+                case 'Norm':
+                    steps += vec1.map((v, i) => `<div class="step">Step ${i + 1}: ${v}² = ${v * v}</div>`).join('');
+                    steps += `<div class="step">Sum of squares: ${vec1.reduce((sum, v) => sum + v * v, 0)}</div>`;
+                    steps += `<div class="step">Final Step: Square root of sum = ${result[0]}</div>`;
+                    break;
+            }
+
+            stepsDisplay.innerHTML = steps;
+        }
+		document.addEventListener('DOMContentLoaded', () => {
+    const tabLinks = document.querySelectorAll('.tab-link');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    // Function to show a specific tab
+    const showTab = (tabId) => {
+        // Hide all tab contents
+        tabContents.forEach(content => {
+            content.classList.remove('active');
+        });
+
+        // Deactivate all tab links
+        tabLinks.forEach(link => {
+            link.classList.remove('active');
+        });
+
+        // Show the selected tab content
+        const targetContent = document.querySelector(tabId);
+        if (targetContent) {
+            targetContent.classList.add('active');
+        }
+
+        // Activate the corresponding tab link
+        const targetLink = document.querySelector(`a[href="${tabId}"]`);
+        if (targetLink) {
+            targetLink.classList.add('active');
+        }
+    };
+
+    // Add event listeners to tab links
+    tabLinks.forEach(link => {
+        link.addEventListener('click', (event) => {
+            event.preventDefault(); // Prevent default anchor link behavior
+            const tabId = event.target.getAttribute('href');
+            showTab(tabId);
+        });
+    });
+
+    // Handle initial tab display based on URL hash, or default to first tab
+    const initialHash = window.location.hash;
+    if (initialHash && document.querySelector(initialHash)) {
+        showTab(initialHash);
+    } else {
+        // Default to the first tab if no hash or invalid hash
+        if (tabLinks.length > 0) {
+            showTab(tabLinks[0].getAttribute('href'));
+        }
+    }
+});
+    </script>
+
 </body>
 </html>
