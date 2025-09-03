@@ -1,7 +1,10 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsxgraph/1.4.4/jsxgraphcore.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/jsxgraph/1.4.4/jsxgraph.css" />
     <title>Basic Math Review for FEM</title>
     <link rel="stylesheet" href="style.css" />
     <style>
@@ -111,10 +114,353 @@
         "imports": {}
       }
     </script>
+    <script>
+      // Initialize JSXGraph boards
+      let interpolationBoard
+      let shapeFunctionsBoard
+      let interpolationShapeBoard
+
+      // Graph elements
+      let point1, point2, interpolatedPoint, lineSegment, infiniteLine
+      let shapeLine1, shapeLine2, shapePoint1, shapePoint2
+      let shapeInterpolationComponents, shapeInterpolationSum
+
+      function calculateBounds(x1, y1, x2, y2, x) {
+        // Calculate bounds for interpolation canvas with 15% margin
+        const minX = Math.min(x1, x2, x)
+        const maxX = Math.max(x1, x2, x)
+        const minY = Math.min(y1, y2)
+        const maxY = Math.max(y1, y2)
+
+        const rangeX = Math.max(maxX - minX, 50) // Minimum range to ensure axes are visible
+        const rangeY = Math.max(maxY - minY, 50)
+
+        const marginX = rangeX * 0.15 // Margin to ensure axes visibility
+        const marginY = rangeY * 0.15
+
+        // Ensure bounds include zero for axes visibility
+        const boundMinX = Math.min(minX - marginX, -marginX)
+        const boundMaxX = Math.max(maxX + 1.5 * marginX, marginX)
+        const boundMinY = Math.min(minY - marginY, -marginY)
+        const boundMaxY = Math.max(maxY + marginY, marginY)
+
+        return {
+          interpolation: [boundMinX, boundMaxY, boundMaxX, boundMinY],
+          shapeFunction: [boundMinX, 1.15, boundMaxX, -0.15]
+        }
+      }
+
+      function updateGraphs() {
+        const x1 = parseFloat(document.getElementById("x1").value)
+        const y1 = parseFloat(document.getElementById("y1").value)
+        const x2 = parseFloat(document.getElementById("x2").value)
+        const y2 = parseFloat(document.getElementById("y2").value)
+        const x = parseFloat(document.getElementById("x").value)
+
+        // Calculate interpolated y value
+        const y = y1 + ((x - x1) * (y2 - y1)) / (x2 - x1)
+
+        // Calculate shape functions
+        const N1 = (x2 - x) / (x2 - x1)
+        const N2 = (x - x1) / (x2 - x1)
+
+        // Calculate shape function interpolation components
+        const y1_N1 = y1 * N1
+        const y2_N2 = y2 * N2
+        const y_sum = y1_N1 + y2_N2
+
+        // Calculate bounds
+        const bounds = calculateBounds(x1, y1, x2, y2, x)
+
+        // Clear and recreate boards with new bounds
+        if (interpolationBoard) {
+          JXG.JSXGraph.freeBoard(interpolationBoard)
+        }
+        if (shapeFunctionsBoard) {
+          JXG.JSXGraph.freeBoard(shapeFunctionsBoard)
+        }
+        if (interpolationShapeBoard) {
+          JXG.JSXGraph.freeBoard(interpolationShapeBoard)
+        }
+
+        // Board configuration with fixed elements
+        const boardConfig = {
+          showCopyright: false,
+          showNavigation: false,
+          grid: false,
+          axis: true
+        }
+
+        // Create interpolation board
+        interpolationBoard = JXG.JSXGraph.initBoard("interpolationCanvas1", {
+          ...boardConfig,
+          boundingbox: bounds.interpolation
+        })
+
+        // Create shape functions board
+        shapeFunctionsBoard = JXG.JSXGraph.initBoard("shapeFunctionsCanvas", {
+          ...boardConfig,
+          boundingbox: bounds.shapeFunction
+        })
+
+        // Create interpolation with shape function board
+        interpolationShapeBoard = JXG.JSXGraph.initBoard("interpolationShapeCanvas", {
+          ...boardConfig,
+          boundingbox: bounds.interpolation
+        })
+
+        // Draw interpolation graph
+        // First create points
+        point1 = interpolationBoard.create("point", [x1, y1], {
+          name: `(${x1}, ${y1})`,
+          size: 4,
+          color: "#e74c3c",
+          label: { offset: [10, 10] },
+          fixed: true
+        })
+
+        point2 = interpolationBoard.create("point", [x2, y2], {
+          name: `(${x2}, ${y2})`,
+          size: 4,
+          color: "#e74c3c",
+          label: { offset: [10, 10] },
+          fixed: true
+        })
+
+        // Draw infinite line (background, dashed)
+        infiniteLine = interpolationBoard.create("line", [point1, point2], {
+          strokeColor: "#bdc3c7",
+          strokeWidth: 1,
+          dash: 2,
+          fixed: true
+        })
+
+        // Draw line segment (foreground, solid)
+        lineSegment = interpolationBoard.create("segment", [point1, point2], {
+          strokeColor: "#3498db",
+          strokeWidth: 3,
+          fixed: true
+        })
+
+        interpolatedPoint = interpolationBoard.create("point", [x, y], {
+          name: `(${x.toFixed(2)}, ${y.toFixed(2)})`,
+          size: 4,
+          color: "#2ecc71",
+          label: { offset: [10, 10] },
+          fixed: true
+        })
+
+        // Draw shape functions graph
+        shapeLine1 = shapeFunctionsBoard.create(
+          "functiongraph",
+          [
+            function (t) {
+              return (x2 - t) / (x2 - x1)
+            },
+            x1,
+            x2
+          ],
+          {
+            name: "N1(x)",
+            strokeColor: "#e74c3c",
+            strokeWidth: 2,
+            fixed: true
+          }
+        )
+
+        shapeLine2 = shapeFunctionsBoard.create(
+          "functiongraph",
+          [
+            function (t) {
+              return (t - x1) / (x2 - x1)
+            },
+            x1,
+            x2
+          ],
+          {
+            name: "N2(x)",
+            strokeColor: "#3498db",
+            strokeWidth: 2,
+            fixed: true
+          }
+        )
+
+        shapePoint1 = shapeFunctionsBoard.create("point", [x, N1], {
+          name: `N1(${x}) = ${N1.toFixed(2)}`,
+          size: 4,
+          color: "#e74c3c",
+          label: { offset: [10, 10] },
+          fixed: true
+        })
+
+        shapePoint2 = shapeFunctionsBoard.create("point", [x, N2], {
+          name: `N2(${x}) = ${N2.toFixed(2)}`,
+          size: 4,
+          color: "#3498db",
+          label: { offset: [10, 10] },
+          fixed: true
+        })
+
+        // Add dashed vertical lines at x1 and x2 in shape functions canvas
+        shapeFunctionsBoard.create(
+          "line",
+          [
+            [x1, -0.5],
+            [x1, 1.5]
+          ],
+          {
+            strokeColor: "#95a5a6",
+            strokeWidth: 1,
+            dash: 2,
+            fixed: true
+          }
+        )
+
+        shapeFunctionsBoard.create(
+          "line",
+          [
+            [x2, -0.5],
+            [x2, 1.5]
+          ],
+          {
+            strokeColor: "#95a5a6",
+            strokeWidth: 1,
+            dash: 2,
+            fixed: true
+          }
+        )
+
+        // Add formula text to shape functions canvas
+        shapeFunctionsBoard.create("text", [bounds.shapeFunction[0] + (bounds.shapeFunction[2] - bounds.shapeFunction[0]) * 0.05, bounds.shapeFunction[1] - 0.2, `y = ${N1.toFixed(2)} * ${y1} + ${N2.toFixed(2)} * ${y2} = ${y.toFixed(2)}`], {
+          fontSize: 12,
+          color: "#2c3e50",
+          fixed: true
+        })
+
+        // Draw interpolation with shape function graph
+        // Component 1: y1 * N1
+        shapeInterpolationComponents = interpolationShapeBoard.create(
+          "functiongraph",
+          [
+            function (t) {
+              const n1 = (x2 - t) / (x2 - x1)
+              return y1 * n1
+            },
+            x1,
+            x2
+          ],
+          {
+            name: "y1*N1(x)",
+            strokeColor: "#e74c3c",
+            strokeWidth: 2,
+            dash: 1,
+            fixed: true
+          }
+        )
+
+        // Component 2: y2 * N2
+        interpolationShapeBoard.create(
+          "functiongraph",
+          [
+            function (t) {
+              const n2 = (t - x1) / (x2 - x1)
+              return y2 * n2
+            },
+            x1,
+            x2
+          ],
+          {
+            name: "y2*N2(x)",
+            strokeColor: "#3498db",
+            strokeWidth: 2,
+            dash: 1,
+            fixed: true
+          }
+        )
+
+        // Sum: y1*N1 + y2*N2
+        shapeInterpolationSum = interpolationShapeBoard.create(
+          "functiongraph",
+          [
+            function (t) {
+              const n1 = (x2 - t) / (x2 - x1)
+              const n2 = (t - x1) / (x2 - x1)
+              return y1 * n1 + y2 * n2
+            },
+            x1,
+            x2
+          ],
+          {
+            name: "y1*N1(x) + y2*N2(x)",
+            strokeColor: "#2ecc71",
+            strokeWidth: 3,
+            fixed: true
+          }
+        )
+
+        // Add dashed vertical lines at x1 and x2 in interpolation with shape function canvas
+        interpolationShapeBoard.create(
+          "line",
+          [
+            [x1, bounds.interpolation[3]],
+            [x1, bounds.interpolation[1]]
+          ],
+          {
+            strokeColor: "#95a5a6",
+            strokeWidth: 1,
+            dash: 2,
+            fixed: true
+          }
+        )
+
+        interpolationShapeBoard.create(
+          "line",
+          [
+            [x2, bounds.interpolation[3]],
+            [x2, bounds.interpolation[1]]
+          ],
+          {
+            strokeColor: "#95a5a6",
+            strokeWidth: 1,
+            dash: 2,
+            fixed: true
+          }
+        )
+
+        // Add points at x1 and x2 for shape interpolation
+        interpolationShapeBoard.create("point", [x1, y1], {
+          name: `(${x1}, ${y1})`,
+          size: 4,
+          color: "#e74c3c",
+          label: { offset: [10, 10] },
+          fixed: true
+        })
+
+        interpolationShapeBoard.create("point", [x2, y2], {
+          name: `(${x2}, ${y2})`,
+          size: 4,
+          color: "#3498db",
+          label: { offset: [10, 10] },
+          fixed: true
+        })
+
+        // Add interpolated point
+        interpolationShapeBoard.create("point", [x, y_sum], {
+          name: `(${x.toFixed(2)}, ${y_sum.toFixed(2)})`,
+          size: 4,
+          color: "#2ecc71",
+          label: { offset: [10, 10] },
+          fixed: true
+        })
+      }
+
+      // Initialize graphs on page load
+      document.addEventListener("DOMContentLoaded", updateGraphs)
+    </script>
   </head>
   <body>
     <header>
-      <h1>Basic Math Review for FEM</h1>
+      <h1 style="color: white">Basic Math Review for FEM</h1>
       <nav>
         <ul>
           <li><a href="#vectors" class="tab-link active">Vectors</a></li>
@@ -128,7 +474,7 @@
 
     <main>
       <section id="vectors" class="tab-content active">
-        <h2>Vectors</h2>
+        <h1>Vectors</h1>
         <p>A vector in n-dimensional space is an ordered collection of n numbers. We denote vectors using curly braces { }. For an n-dimensional vector {a}, we write:</p>
         <p class="math-formula">{a} = {a₁, a₂, ..., aₙ}</p>
         <p>where a₁, a₂, ..., aₙ are the components of the vector {a}.</p>
@@ -274,7 +620,7 @@
       </section>
 
       <section id="matrices" class="tab-content">
-        <h2>Matrices</h2>
+        <h1>Matrices</h1>
         <h2>Introduction to Matrices</h2>
         <p>A matrix is a rectangular array of numbers, symbols, or expressions arranged in rows and columns. We denote matrices using capital letters enclosed in curly braces. For an m × n matrix {A}, we write:</p>
         <div class="math-formula">
@@ -636,8 +982,105 @@
       </section>
 
       <section id="interpolation" class="tab-content">
-        <h2>Interpolation</h2>
-        <p>Content will be added.</p>
+        <div id="linear">
+          <h1>1. Linear Interpolation</h1>
+
+          <section id="introduction">
+            <h3>What is Linear Interpolation?</h3>
+            <p>Linear interpolation is a method of estimating a value between two known values. It assumes a straight line between these two points and finds the desired point along that line.</p>
+          </section>
+
+          <section id="formula">
+            <h3>The Formula</h3>
+            <p>The formula for linear interpolation is:</p>
+            <p><strong>y = y1 + (x - x1) * (y2 - y1) / (x2 - x1)</strong></p>
+            <p>Where:</p>
+            <ul>
+              <li>(x1, y1) is the first known point</li>
+              <li>(x2, y2) is the second known point</li>
+              <li>x is the x-coordinate of the point we want to find</li>
+              <li>y is the resulting y-coordinate</li>
+            </ul>
+          </section>
+
+          <section id="visualization">
+            <h3>Interactive Visualization</h3>
+
+            <div class="input-group">
+              <div class="point-group">
+                <h4>Point 1:</h4>
+                <label for="x1">x1:</label>
+                <input class="interp-inputs" type="number" id="x1" value="100" />
+                <label for="y1">y1:</label>
+                <input class="interp-inputs" type="number" id="y1" value="100" />
+              </div>
+              <div class="point-group">
+                <h4>Point 2:</h4>
+                <label for="x2">x2:</label>
+                <input class="interp-inputs" type="number" id="x2" value="400" />
+                <label for="y2">y2:</label>
+                <input class="interp-inputs" type="number" id="y2" value="300" />
+              </div>
+              <div class="x-group">
+                <h4>Interpolate at:</h4>
+                <label for="x">x:</label>
+                <input class="interp-inputs" type="number" id="x" value="200" />
+              </div>
+              <button class="update-button" onclick="updateGraphs()">Update Graphs</button>
+            </div>
+            <div class="canvas-container">
+              <div class="canvas-item">
+                <div id="interpolationCanvas1" class="jxgbox" style="width: 600px; height: 350px"></div>
+              </div>
+              <div class="canvas-item">
+                <h3>Shape Functions</h3>
+                <div id="shapeFunctionsCanvas" class="jxgbox" style="width: 600px; height: 350px"></div>
+              </div>
+              <div class="canvas-item">
+                <h3>Interpolation with Shape Functions</h3>
+                <div id="interpolationShapeCanvas" class="jxgbox" style="width: 600px; height: 350px"></div>
+              </div>
+            </div>
+          </section>
+        </div>
+        <div id="lagrange" style="padding-top: 50px">
+          <h1>2. Lagrange Interpolation</h1>
+
+          <p>Edit the number of points and their x, y values to see how the Lagrange interpolation and individual polynomials change. The first and last points will remain fixed and are not editable.</p>
+
+          <div class="controls">
+            <label for="numPoints">Number of Points:</label>
+            <input type="number" id="numPoints" min="2" max="10" value="3" />
+            <button id="updatePoints">Update Points</button>
+          </div>
+
+          <h2>Point Data</h2>
+          <table id="pointTable">
+            <thead>
+              <tr>
+                <th>Point</th>
+                <th>X</th>
+                <th>Y</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Point data will be inserted here -->
+            </tbody>
+          </table>
+
+          <div id="canvasContainer">
+            <div>
+              <h2>Individual Polynomials</h2>
+              <canvas id="polynomialsCanvas" width="900" height="400"></canvas>
+            </div>
+          </div>
+          <div id="canvasContainer">
+            <div>
+              <h2>Full Interpolation</h2>
+              <canvas id="interpolationCanvas" width="900" height="400"></canvas>
+            </div>
+          </div>
+        </div>
       </section>
 
       <section id="differentiation" class="tab-content">
@@ -809,6 +1252,264 @@
           }
         }
       })
+    </script>
+    <script>
+      // Code for Lagrange Interpolation
+      const interpolationCanvas = document.getElementById("interpolationCanvas")
+      const polynomialsCanvas = document.getElementById("polynomialsCanvas")
+      const ctxInterpolation = interpolationCanvas.getContext("2d")
+      const ctxPolynomials = polynomialsCanvas.getContext("2d")
+      const numPointsInput = document.getElementById("numPoints")
+      const updatePointsBtn = document.getElementById("updatePoints")
+      const pointTable = document.getElementById("pointTable").getElementsByTagName("tbody")[0]
+      let points = []
+
+      const colors = ["#e74c3c", "#3498db", "#2ecc71", "#f39c12", "#9b59b6", "#1abc9c", "#34495e", "#e67e22", "#95a5a6", "#16a085"]
+
+      function drawPoint(ctx, x, y) {
+        ctx.beginPath()
+        ctx.arc(x, y, 4, 0, 2 * Math.PI)
+        ctx.fillStyle = "red"
+        ctx.fill()
+      }
+
+      function lagrangeInterpolation(x, points) {
+        let result = 0
+        for (let i = 0; i < points.length; i++) {
+          result += points[i].y * lagrangeBasis(x, i, points)
+        }
+        return result
+      }
+
+      function lagrangeBasis(x, i, points) {
+        let basis = 1
+        for (let j = 0; j < points.length; j++) {
+          if (i !== j) {
+            basis *= (x - points[j].x) / (points[i].x - points[j].x)
+          }
+        }
+        return basis
+      }
+
+      function getYRange(points, isPolynomials = false) {
+        let yMin = Infinity
+        let yMax = -Infinity
+
+        for (let x = 0; x <= 10; x += 0.1) {
+          if (isPolynomials) {
+            for (let i = 0; i < points.length; i++) {
+              const y = lagrangeBasis(x, i, points)
+              yMin = Math.min(yMin, y)
+              yMax = Math.max(yMax, y)
+            }
+          } else {
+            const y = lagrangeInterpolation(x, points)
+            yMin = Math.min(yMin, y)
+            yMax = Math.max(yMax, y)
+          }
+        }
+
+        // Add some padding
+        const padding = (yMax - yMin) * 0.1
+        return { yMin: yMin - padding, yMax: yMax + padding }
+      }
+
+      function drawInterpolation() {
+        ctxInterpolation.clearRect(0, 0, interpolationCanvas.width, interpolationCanvas.height)
+        const { yMin, yMax } = getYRange(points)
+        const padding = 40
+        const graphWidth = interpolationCanvas.width - padding * 2
+        const graphHeight = interpolationCanvas.height - padding * 2
+
+        // Draw x-axis
+        ctxInterpolation.strokeStyle = "#000"
+        ctxInterpolation.lineWidth = 1
+        ctxInterpolation.beginPath()
+        const yZero = interpolationCanvas.height - padding - ((0 - yMin) / (yMax - yMin)) * graphHeight
+        ctxInterpolation.moveTo(padding, yZero)
+        ctxInterpolation.lineTo(interpolationCanvas.width - padding, yZero)
+        ctxInterpolation.stroke()
+
+        // Draw y-axis
+        ctxInterpolation.beginPath()
+        ctxInterpolation.moveTo(padding, padding)
+        ctxInterpolation.lineTo(padding, interpolationCanvas.height - padding)
+        ctxInterpolation.stroke()
+
+        // Draw points and interpolation
+        points.forEach(point => {
+          const x = padding + (point.x / 10) * graphWidth
+          const y = interpolationCanvas.height - padding - ((point.y - yMin) / (yMax - yMin)) * graphHeight
+          drawPoint(ctxInterpolation, x, y)
+
+          // Draw x-value label
+          ctxInterpolation.fillStyle = "#000"
+          ctxInterpolation.font = "10px Arial"
+          ctxInterpolation.textAlign = "center"
+          ctxInterpolation.fillText(point.x.toFixed(1), x, yZero + 15)
+        })
+
+        if (points.length > 1) {
+          ctxInterpolation.beginPath()
+          for (let x = 0; x <= 10; x += 0.1) {
+            const y = lagrangeInterpolation(x, points)
+            const canvasX = padding + (x / 10) * graphWidth
+            const canvasY = interpolationCanvas.height - padding - ((y - yMin) / (yMax - yMin)) * graphHeight
+            if (x === 0) {
+              ctxInterpolation.moveTo(canvasX, canvasY)
+            } else {
+              ctxInterpolation.lineTo(canvasX, canvasY)
+            }
+          }
+          ctxInterpolation.strokeStyle = "blue"
+          ctxInterpolation.lineWidth = 2
+          ctxInterpolation.stroke()
+        }
+
+        // Draw y-axis labels
+        ctxInterpolation.fillStyle = "#000"
+        ctxInterpolation.font = "10px Arial"
+        ctxInterpolation.textAlign = "right"
+        ctxInterpolation.fillText(yMin.toFixed(1), padding - 5, interpolationCanvas.height - padding + 5)
+        ctxInterpolation.fillText(yMax.toFixed(1), padding - 5, padding + 5)
+      }
+
+      function drawIndividualPolynomials() {
+        ctxPolynomials.clearRect(0, 0, polynomialsCanvas.width, polynomialsCanvas.height)
+        const { yMin, yMax } = getYRange(points, true)
+        const padding = 40
+        const graphWidth = polynomialsCanvas.width - padding * 2
+        const graphHeight = polynomialsCanvas.height - padding * 2
+
+        // Draw x-axis
+        ctxPolynomials.strokeStyle = "#000"
+        ctxPolynomials.lineWidth = 1
+        ctxPolynomials.beginPath()
+        const yZero = polynomialsCanvas.height - padding - ((0 - yMin) / (yMax - yMin)) * graphHeight
+        ctxPolynomials.moveTo(padding, yZero)
+        ctxPolynomials.lineTo(polynomialsCanvas.width - padding, yZero)
+        ctxPolynomials.stroke()
+
+        // Draw y-axis
+        ctxPolynomials.beginPath()
+        ctxPolynomials.moveTo(padding, padding)
+        ctxPolynomials.lineTo(padding, polynomialsCanvas.height - padding)
+        ctxPolynomials.stroke()
+
+        // Draw points and individual polynomials
+        points.forEach((point, index) => {
+          const x = padding + (point.x / 10) * graphWidth
+          const y = polynomialsCanvas.height - padding - ((point.y - yMin) / (yMax - yMin)) * graphHeight
+          drawPoint(ctxPolynomials, x, y)
+
+          // Draw x-value label
+          ctxPolynomials.fillStyle = "#000"
+          ctxPolynomials.font = "10px Arial"
+          ctxPolynomials.textAlign = "center"
+          ctxPolynomials.fillText(point.x.toFixed(1), x, yZero + 15)
+
+          ctxPolynomials.beginPath()
+          for (let x = 0; x <= 10; x += 0.1) {
+            const y = lagrangeBasis(x, index, points)
+            const canvasX = padding + (x / 10) * graphWidth
+            const canvasY = polynomialsCanvas.height - padding - ((y - yMin) / (yMax - yMin)) * graphHeight
+            if (x === 0) {
+              ctxPolynomials.moveTo(canvasX, canvasY)
+            } else {
+              ctxPolynomials.lineTo(canvasX, canvasY)
+            }
+          }
+          ctxPolynomials.strokeStyle = colors[index % colors.length]
+          ctxPolynomials.lineWidth = 2
+          ctxPolynomials.stroke()
+        })
+
+        // Draw y-axis labels
+        ctxPolynomials.fillStyle = "#000"
+        ctxPolynomials.font = "10px Arial"
+        ctxPolynomials.textAlign = "right"
+        ctxPolynomials.fillText(yMin.toFixed(1), padding - 5, polynomialsCanvas.height - padding + 5)
+        ctxPolynomials.fillText(yMax.toFixed(1), padding - 5, padding + 5)
+      }
+
+      function updatePointTable() {
+        pointTable.innerHTML = ""
+        points.forEach((point, index) => {
+          const row = pointTable.insertRow()
+          row.insertCell(0).textContent = index + 1
+          const xInput = document.createElement("input")
+          xInput.type = "number"
+          xInput.value = point.x
+          xInput.min = 0
+          xInput.max = 10
+          xInput.step = 1
+          xInput.addEventListener("change", e => {
+            point.x = parseInt(e.target.value)
+            drawInterpolation()
+            drawIndividualPolynomials()
+          })
+          if (index === 0 || index === points.length - 1) {
+            xInput.classList.add("readonly")
+            xInput.readOnly = true
+          }
+          row.insertCell(1).appendChild(xInput)
+
+          const yInput = document.createElement("input")
+          yInput.type = "number"
+          yInput.value = point.y.toFixed(2)
+          yInput.step = 0.01
+          yInput.addEventListener("change", e => {
+            point.y = parseFloat(parseFloat(e.target.value).toFixed(2))
+            drawInterpolation()
+            drawIndividualPolynomials()
+          })
+          if (index === 0 || index === points.length - 1) {
+            yInput.classList.add("readonly")
+            yInput.readOnly = true
+          }
+          row.insertCell(2).appendChild(yInput)
+        })
+      }
+
+      function initializePoints(num) {
+        const oldPoints = [...points]
+        points = []
+
+        if (oldPoints.length > 0) {
+          points.push({ x: 0, y: parseFloat(oldPoints[0].y.toFixed(2)) })
+        } else {
+          points.push({ x: 0, y: parseFloat((5 + Math.random() * 5 - 2.5).toFixed(2)) })
+        }
+
+        for (let i = 1; i < num - 1; i++) {
+          points.push({
+            x: Math.round((i * 10) / (num - 1)),
+            y: parseFloat((5 + Math.random() * 5 - 2.5).toFixed(2))
+          })
+        }
+
+        if (oldPoints.length > 1) {
+          points.push({ x: 10, y: parseFloat(oldPoints[oldPoints.length - 1].y.toFixed(2)) })
+        } else {
+          points.push({ x: 10, y: parseFloat((5 + Math.random() * 5 - 2.5).toFixed(2)) })
+        }
+
+        updatePointTable()
+        drawInterpolation()
+        drawIndividualPolynomials()
+      }
+
+      updatePointsBtn.addEventListener("click", () => {
+        const numPoints = parseInt(numPointsInput.value)
+        if (numPoints >= 2 && numPoints <= 10) {
+          initializePoints(numPoints)
+        } else {
+          alert("Please enter a number between 2 and 10")
+        }
+      })
+
+      // Initialize with 3 points
+      initializePoints(3)
     </script>
   </body>
 </html>
