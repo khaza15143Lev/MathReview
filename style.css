@@ -42,7 +42,7 @@ nav ul li a.active {
   font-weight: bold;
 }
 
-main {
+#main-content {
   padding: 2rem;
   max-width: 900px;
   margin: 2rem auto;
@@ -207,4 +207,204 @@ input[type="number"] {
 .readonly {
   background-color: #f2f2f2;
   cursor: not-allowed;
+}
+
+/* gauss */
+
+.input-section,
+.results-section {
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.input-group0 {
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.input-group-int {
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.input-group-int label {
+  font-weight: bold;
+  min-width: 150px;
+}
+.input-group0-int label {
+  font-weight: bold;
+  min-width: 150px;
+}
+.input-group-int input[type="text"],
+.input-group-int input[type="number"],
+.input-group-int select {
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  flex-grow: 1;
+  max-width: 200px;
+}
+.input-group0 input[type="text"],
+.input-group0 input[type="number"],
+.input-group0 select {
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  flex-grow: 1;
+  max-width: 400px;
+}
+
+button {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.2s;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+.results-section code {
+  background-color: #e9ecef;
+  padding: 2px 5px;
+  border-radius: 3px;
+  font-family: monospace;
+}
+
+#gaussPointsDisplay1D table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+
+#gaussPointsDisplay1D th,
+#gaussPointsDisplay1D td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+}
+
+#gaussPointsDisplay1D th {
+  background-color: #f2f2f2;
+}
+
+#gaussPointsDisplay1D td:first-child {
+  font-weight: bold;
+}
+
+/*  other gauss */
+
+.input-section,
+.results-section,
+.canvas-section {
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.input-group-int2 {
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.input-group-int2 label {
+  font-weight: bold;
+  min-width: 150px;
+}
+
+.input-group-int2 input[type="text"],
+.input-group-int2 input[type="number"],
+.input-group-int2 select {
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  flex-grow: 1;
+  max-width: 200px;
+}
+
+button {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.2s;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+.results-section code {
+  background-color: #e9ecef;
+  padding: 2px 5px;
+  border-radius: 3px;
+  font-family: monospace;
+}
+
+.canvas-section {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.canvas-container {
+  flex: 1;
+  min-width: 45%;
+  background-color: #f9f9f9;
+  border: 1px solid #e0e0e0;
+  border-radius: 5px;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.canvas-container h3 {
+  text-align: center;
+  margin-top: 0;
+  color: #333;
+}
+
+canvas {
+  display: block;
+  margin: 0 auto;
+  border: 1px solid #ccc;
+  background-color: #fff;
+}
+
+#gaussPointsDisplay2D table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+
+#gaussPointsDisplay2D th,
+#gaussPointsDisplay2D td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+}
+
+#gaussPointsDisplay2D th {
+  background-color: #f2f2f2;
+}
+
+#gaussPointsDisplay2D td:first-child {
+  font-weight: bold;
+}
+#functionInput2D {
+  width: 100%;
 }

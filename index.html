@@ -1,7 +1,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/12.4.2/math.min.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsxgraph/1.4.4/jsxgraphcore.js"></script>
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/jsxgraph/1.4.4/jsxgraph.css" />
@@ -472,7 +472,7 @@
       </nav>
     </header>
 
-    <main>
+    <div id="main-content">
       <section id="vectors" class="tab-content active">
         <h1>Vectors</h1>
         <p>A vector in n-dimensional space is an ordered collection of n numbers. We denote vectors using curly braces { }. For an n-dimensional vector {a}, we write:</p>
@@ -1046,7 +1046,7 @@
         <div id="lagrange" style="padding-top: 50px">
           <h1>2. Lagrange Interpolation</h1>
 
-          <p>Edit the number of points and their x, y values to see how the Lagrange interpolation and individual polynomials change. The first and last points will remain fixed and are not editable.</p>
+          <p>Edit the number of points and their x, y values to see how the Lagrange interpolation and individual polynomials change. The first and last points will rediv fixed and are not editable.</p>
 
           <div class="controls">
             <label for="numPoints">Number of Points:</label>
@@ -1089,10 +1089,124 @@
       </section>
 
       <section id="integration" class="tab-content">
-        <h2>Integration</h2>
-        <p>Content will be added.</p>
+        <h1>Integration</h1>
+        <div id="integration1D">
+          <h2>Gauss-Legendre Quadrature</h2>
+          <p>Explore Gauss-Legendre integration by changing the number of points and the integration interval.</p>
+
+          <div class="input-section">
+            <div class="input-group-int">
+              <label for="functionInput1D">Function f(x):</label>
+              <input type="text" id="functionInput1D" value="" />
+            </div>
+            <div class="input-group-int">
+              <label for="intervalA1D">Interval [a, b]:</label>
+              <input type="number" id="intervalA1D" value="0" step="0.1" />
+              <input type="number" id="intervalB1D" value="3.1415926535" step="0.1" />
+            </div>
+            <div class="input-group-int">
+              <label for="numPoints1D">Number of Gauss Points:</label>
+              <select id="numPoints1D">
+                <option value="1">1 Point</option>
+                <option value="2" selected>2 Points</option>
+                <option value="3">3 Points</option>
+                <option value="4">4 Points</option>
+              </select>
+            </div>
+            <button id="calculateButton1D">Calculate & Plot</button>
+          </div>
+
+          <div class="results-section">
+            <h2>Results</h2>
+            <p>Calculated Integral (Gauss): <span id="gaussResult1D"></span></p>
+            <p>Calculated Integral (Exact): <span id="exactResult1D"></span></p>
+            <p>Difference: <span id="differenceResult1D"></span></p>
+            <h3>Interval Transformation:</h3>
+            <p>Original interval <code>[a, b]</code> is transformed to <code>[-1, 1]</code> using:</p>
+            <p><code>x = ((b - a)/2)t + ((b + a)/2)</code></p>
+            <p><code>dx = ((b - a)/2) dt</code></p>
+            <p>So, ∫<sub>a</sub><sup>b</sup> f(x) dx = ((b - a)/2) ∫<sub>-1</sub><sup>1</sup> f(((b - a)/2)t + ((b + a)/2)) dt</p>
+            <p>
+              Let <code>g(t) = f(((b - a)/2)t + ((b + a)/2))</code>. The integral becomes <code>((b - a)/2) Σ [w<sub>i</sub> × g(t<sub>i</sub>)]</code>
+            </p>
+
+            <h3>Gauss Points and Weights for t ∈ [-1, 1]:</h3>
+            <div id="gaussPointsDisplay1D"></div>
+          </div>
+
+          <div class="canvas-section" style="display: flex; flex-direction: column">
+            <div class="canvas-container">
+              <h3>Original Function f(x) on [a, b]</h3>
+              <canvas id="originalCanvas1D" width="600" height="300"></canvas>
+            </div>
+            <div class="canvas-container">
+              <h3>Transformed Function g(t) on [-1, 1]</h3>
+              <canvas id="transformedCanvas1D" width="600" height="300"></canvas>
+            </div>
+          </div>
+        </div>
+        <div id="integration2D">
+          <h2>Gauss-Legendre Quadrature (2D)</h2>
+          <p>Explore Gauss-Legendre integration for a two-variable function over a rectangular domain.</p>
+          <div class="input-group-int2">
+            <label for="functionInput2D">Function f(x, y):</label>
+            <input type="text" id="functionInput2D" value="x^2 + y^3" />
+          </div>
+          <div class="input-section">
+            <div class="input-group-int2">
+              <label for="intervalA2D">x-Interval [a, b]:</label>
+              <input type="number" id="intervalA2D" value="0" step="0.1" />
+              <input type="number" id="intervalB2D" value="1" step="0.1" />
+            </div>
+            <div class="input-group-int2">
+              <label for="intervalC2D">y-Interval [c, d]:</label>
+              <input type="number" id="intervalC2D" value="0" step="0.1" />
+              <input type="number" id="intervalD2D" value="2" step="0.1" />
+            </div>
+            <div class="input-group-int2">
+              <label for="numPointsX2D">Gauss Points (x):</label>
+              <select id="numPointsX2D">
+                <option value="1">1 Point</option>
+                <option value="2" selected>2 Points</option>
+                <option value="3">3 Points</option>
+                <option value="4">4 Points</option>
+              </select>
+            </div>
+            <div class="input-group-int2">
+              <label for="numPointsY2D">Gauss Points (y):</label>
+              <select id="numPointsY2D">
+                <option value="1">1 Point</option>
+                <option value="2" selected>2 Points</option>
+                <option value="3">3 Points</option>
+                <option value="4">4 Points</option>
+              </select>
+            </div>
+            <button id="calculateButton2D">Submit</button>
+          </div>
+
+          <div class="results-section">
+            <h2>Results</h2>
+            <p>Calculated Integral (Gauss): <span id="gaussResult2D"></span></p>
+            <p>Calculated Integral (Exact): <span id="exactResult2D"></span></p>
+            <p>Difference: <span id="differenceResult2D"></span></p>
+            <h3>Interval Transformation:</h3>
+            <p>The original integral over <code>[a, b] x [c, d]</code> is transformed to <code>[-1, 1] x [-1, 1]</code>.</p>
+            <p>
+              <code>x = ((b - a)/2)t<sub>x</sub> + ((b + a)/2)</code>
+            </p>
+            <p>
+              <code>y = ((d - c)/2)t<sub>y</sub> + ((d + c)/2)</code>
+            </p>
+            <p>
+              The integral becomes: <code>((b - a)/2)((d - c)/2) Σ<sub>i</sub> Σ<sub>j</sub> [w<sub>x,i</sub> w<sub>y,j</sub> × g(t<sub>x,i</sub>, t<sub>y,j</sub>)]</code>
+            </p>
+
+            <h3>Gauss Points, Weights, and Evaluation Points:</h3>
+            <div id="gaussPointsDisplay2D"></div>
+          </div>
+        </div>
       </section>
-    </main>
+    </div>
     <script>
       let vectorA, vectorB
 
@@ -1510,6 +1624,764 @@
 
       // Initialize with 3 points
       initializePoints(3)
+    </script>
+    <script>
+      // CanvasPlotter Class
+      class CanvasPlotter {
+        constructor(canvasId) {
+          this.canvas = document.getElementById(canvasId)
+          if (!this.canvas) {
+            console.error(`Canvas with ID "${canvasId}" not found.`)
+            return
+          }
+          this.ctx = this.canvas.getContext("2d")
+          this.xMin = 0
+          this.xMax = 1
+          this.yMin = 0
+          this.yMax = 1
+
+          this.padding = 30
+          this.width = this.canvas.width - 2 * this.padding
+          this.height = this.canvas.height - 2 * this.padding
+        }
+
+        setRange(xMin, xMax, yMin, yMax) {
+          this.xMin = xMin
+          this.xMax = xMax
+          this.yMin = yMin
+          this.yMax = yMax
+        }
+
+        toCanvasX(x) {
+          return this.padding + ((x - this.xMin) / (this.xMax - this.xMin)) * this.width
+        }
+
+        toCanvasY(y) {
+          return this.padding + (1 - (y - this.yMin) / (this.yMax - this.yMin)) * this.height
+        }
+
+        clear() {
+          this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
+        }
+
+        drawAxes(xLabel = "x", yLabel = "y") {
+          this.ctx.strokeStyle = "#888"
+          this.ctx.lineWidth = 1
+          this.ctx.font = "10px Arial"
+          this.ctx.fillStyle = "#333"
+
+          // X-axis
+          this.ctx.beginPath()
+          this.ctx.moveTo(this.padding, this.toCanvasY(0))
+          this.ctx.lineTo(this.padding + this.width, this.toCanvasY(0))
+          this.ctx.stroke()
+
+          // Y-axis
+          this.ctx.beginPath()
+          this.ctx.moveTo(this.toCanvasX(0), this.padding)
+          this.ctx.lineTo(this.toCanvasX(0), this.padding + this.height)
+          this.ctx.stroke()
+
+          // X-axis labels
+          this.ctx.textAlign = "center"
+          this.ctx.textBaseline = "top"
+          const numXLabels = 5
+          for (let i = 0; i <= numXLabels; i++) {
+            const xVal = this.xMin + (this.xMax - this.xMin) * (i / numXLabels)
+            const px = this.toCanvasX(xVal)
+            if (this.toCanvasY(0) + 5 > this.canvas.height - 10) {
+              // Check if label would be too low
+              this.ctx.fillText(xVal.toFixed(2), px, this.canvas.height - 15)
+            } else {
+              this.ctx.fillText(xVal.toFixed(2), px, this.toCanvasY(0) + 5)
+            }
+          }
+          this.ctx.fillText(xLabel, this.padding + this.width / 2, this.canvas.height - 15)
+
+          // Y-axis labels
+          this.ctx.textAlign = "right"
+          this.ctx.textBaseline = "middle"
+          let labelX = this.xMin <= 0 && this.xMax >= 0 ? this.toCanvasX(0) - 5 : this.padding - 5
+          const numYLabels = 5
+          for (let i = 0; i <= numYLabels; i++) {
+            const yVal = this.yMin + (this.yMax - this.yMin) * (i / numYLabels)
+            const py = this.toCanvasY(yVal)
+            this.ctx.fillText(yVal.toFixed(2), labelX, py)
+          }
+
+          this.ctx.save()
+          this.ctx.translate(15, this.padding + this.height / 2)
+          this.ctx.rotate(-Math.PI / 2)
+          this.ctx.textAlign = "center"
+          this.ctx.fillText(yLabel, 0, 0)
+          this.ctx.restore()
+
+          this.ctx.textAlign = "left"
+          this.ctx.textBaseline = "top"
+          let zeroLabelX = this.xMin <= 0 && this.xMax >= 0 ? this.toCanvasX(0) + 5 : this.padding + 5
+          let zeroLabelY = this.yMin <= 0 && this.yMax >= 0 ? this.toCanvasY(0) + 5 : this.canvas.height - this.padding + 5
+          this.ctx.fillText("0", zeroLabelX, zeroLabelY)
+        }
+
+        drawFunction(func, color = "blue", steps = 200) {
+          this.ctx.strokeStyle = color
+          this.ctx.lineWidth = 2
+          this.ctx.beginPath()
+
+          let firstPoint = true
+          for (let i = 0; i <= steps; i++) {
+            const x = this.xMin + (this.xMax - this.xMin) * (i / steps)
+            const y = func(x)
+            const px = this.toCanvasX(x)
+            const py = this.toCanvasY(y)
+
+            if (isFinite(y)) {
+              if (firstPoint) {
+                this.ctx.moveTo(px, py)
+                firstPoint = false
+              } else {
+                this.ctx.lineTo(px, py)
+              }
+            } else {
+              firstPoint = true
+            }
+          }
+          this.ctx.stroke()
+        }
+
+        drawPoints(points, color = "red", radius = 4, showLines = true) {
+          points.forEach(p => {
+            const px = this.toCanvasX(p.x)
+            const py = this.toCanvasY(p.y)
+
+            this.ctx.fillStyle = color
+            this.ctx.beginPath()
+            this.ctx.arc(px, py, radius, 0, Math.PI * 2)
+            this.ctx.fill()
+
+            if (showLines) {
+              this.ctx.strokeStyle = color
+              this.ctx.lineWidth = 1
+              this.ctx.setLineDash([2, 2])
+              this.ctx.beginPath()
+              this.ctx.moveTo(px, this.toCanvasY(0))
+              this.ctx.lineTo(px, py)
+              this.ctx.stroke()
+              this.ctx.setLineDash([])
+            }
+          })
+        }
+
+        static getYRange(func, xMin, xMax, steps = 100) {
+          let minY = Infinity
+          let maxY = -Infinity
+          for (let i = 0; i <= steps; i++) {
+            const x = xMin + (xMax - xMin) * (i / steps)
+            const y = func(x)
+            if (isFinite(y)) {
+              if (y < minY) minY = y
+              if (y > maxY) maxY = y
+            }
+          }
+          if (!isFinite(minY) || !isFinite(maxY) || minY === maxY) {
+            minY = -1
+            maxY = 1
+          }
+          const padding = (maxY - minY) * 0.1
+          return { yMin: minY - padding, yMax: maxY + padding }
+        }
+      }
+
+      // Pre-computed Gauss-Legendre points and weights for interval [-1, 1]
+      const gaussPointsAndWeights = {
+        1: {
+          t: [0],
+          w: [2]
+        },
+        2: {
+          t: [-1 / Math.sqrt(3), 1 / Math.sqrt(3)],
+          w: [1, 1]
+        },
+        3: {
+          t: [-Math.sqrt(3 / 5), 0, Math.sqrt(3 / 5)],
+          w: [5 / 9, 8 / 9, 5 / 9]
+        },
+        4: {
+          t: [-Math.sqrt((3 + 2 * Math.sqrt(6 / 5)) / 7), -Math.sqrt((3 - 2 * Math.sqrt(6 / 5)) / 7), Math.sqrt((3 - 2 * Math.sqrt(6 / 5)) / 7), Math.sqrt((3 + 2 * Math.sqrt(6 / 5)) / 7)],
+          w: [(18 - Math.sqrt(30)) / 36, (18 + Math.sqrt(30)) / 36, (18 + Math.sqrt(30)) / 36, (18 - Math.sqrt(30)) / 36]
+        }
+      }
+
+      // Function to parse a string expression into a callable function
+      function parseFunction(funcString1D, variableName = "x") {
+        try {
+          const parsedNode = math.parse(funcString1D)
+          return val => {
+            const scope = {}
+            scope[variableName] = val
+            return parsedNode.evaluate(scope)
+          }
+        } catch (error) {
+          console.error("Error parsing function:", error)
+          return () => NaN
+        }
+      }
+
+      // --- NEW FUNCTION TO CALCULATE THE EXACT INTEGRAL OF A POLYNOMIAL ---
+      function integratePolynomialExactly(polyString, a, b) {
+        try {
+          // Split polynomial into terms
+          const terms = polyString
+            .replace(/-/g, "+-")
+            .split("+")
+            .map(t => t.trim())
+            .filter(t => t)
+
+          let integralAt = function (x) {
+            let sum = 0
+            for (let rawTerm of terms) {
+              let term = rawTerm.replace(/\s+/g, "") // remove spaces like " - 2x^2"
+              if (term === "") continue
+
+              let match = term.match(/^([+-]?\d*)(x(?:\^(\d+))?)?$/)
+              if (!match) continue
+
+              let coeffStr = match[1]
+              let coeff = coeffStr === "" || coeffStr === "+" ? 1 : coeffStr === "-" ? -1 : parseFloat(coeffStr)
+              let power = match[3] ? parseInt(match[3]) : match[2] ? 1 : 0
+
+              sum += (coeff * Math.pow(x, power + 1)) / (power + 1)
+            }
+
+            return sum
+          }
+
+          return integralAt(b) - integralAt(a)
+        } catch (error) {
+          console.error("Error calculating exact integral:", error)
+          return NaN
+        }
+      }
+
+      // Main integration function
+      function integrateGauss(funcString1D, a, b, numPoints) {
+        const points = gaussPointsAndWeights[numPoints]
+        if (!points) {
+          throw new Error(`Gauss points for ${numPoints} not defined.`)
+        }
+
+        const func_f = parseFunction(funcString1D, "x")
+
+        const factor = (b - a) / 2
+        const offset = (b + a) / 2
+
+        const func_g = t => func_f(factor * t + offset)
+
+        let integralSum = 0
+        const evaluationPoints_f = []
+        const evaluationPoints_g = []
+
+        for (let i = 0; i < numPoints; i++) {
+          const t_i = points.t[i]
+          const w_i = points.w[i]
+
+          const x_i = factor * t_i + offset
+          const g_t_i = func_g(t_i)
+          const f_x_i = func_f(x_i)
+
+          integralSum += w_i * g_t_i
+
+          evaluationPoints_f.push({ x: x_i, y: f_x_i, weight: w_i })
+          evaluationPoints_g.push({ x: t_i, y: g_t_i, weight: w_i })
+        }
+
+        const finalIntegral = factor * integralSum
+
+        return {
+          integral: finalIntegral,
+          gaussPoints: points,
+          transformedPoints_f: evaluationPoints_f,
+          transformedPoints_g: evaluationPoints_g,
+          func_f: func_f,
+          func_g: func_g
+        }
+      }
+
+      // --- NEW FUNCTION TO GENERATE RANDOM POLYNOMIAL ---
+      function generateRandomPolynomial1D() {
+        const degree = Math.floor(Math.random() * 4) + 2 // Random degree from 2 to 5
+        let polynomial = ""
+        for (let i = degree; i >= 0; i--) {
+          const coeff = Math.floor(Math.random() * 21) - 10 // Random integer from -10 to 10
+          if (coeff === 0) continue
+
+          let term = ""
+          if (i > 0) {
+            if (Math.abs(coeff) !== 1 || i === 0) {
+              term += Math.abs(coeff)
+            }
+            term += i === 1 ? "x" : `x^${i}`
+          } else {
+            term += Math.abs(coeff)
+          }
+
+          if (i < degree) {
+            polynomial += coeff > 0 ? ` + ${term}` : ` - ${term}`
+          } else {
+            polynomial += coeff > 0 ? term : `-${term}`
+          }
+        }
+        return polynomial.trim().replace(/\+ -/g, "- ").replace(/  +/g, " ") // Clean up formatting
+      }
+
+      // UI elements
+      const functionInput1D = document.getElementById("functionInput1D")
+      const intervalAInput1D = document.getElementById("intervalA1D")
+      const intervalBInput1D = document.getElementById("intervalB1D")
+      const numPointsSelect1D = document.getElementById("numPoints1D")
+      const calculateButton1D = document.getElementById("calculateButton1D")
+      const gaussResultSpan1D = document.getElementById("gaussResult1D")
+      const exactResultSpan1D = document.getElementById("exactResult1D")
+      const differenceResultSpan1D = document.getElementById("differenceResult1D")
+      const gaussPointsDisplayDiv1D = document.getElementById("gaussPointsDisplay1D")
+
+      const originalPlotter1D = new CanvasPlotter("originalCanvas1D")
+      const transformedPlotter1D = new CanvasPlotter("transformedCanvas1D")
+
+      // Function to clear all result spans
+      function clearResults1D() {
+        gaussResultSpan1D.textContent = ""
+        exactResultSpan1D.textContent = ""
+        differenceResultSpan1D.textContent = ""
+        gaussPointsDisplayDiv1D.innerHTML = ""
+        originalPlotter1D.clear()
+        transformedPlotter1D.clear()
+      }
+
+      function updateDisplay1D() {
+        const funcString1D = functionInput1D.value
+        const a = parseFloat(intervalAInput1D.value)
+        const b = parseFloat(intervalBInput1D.value)
+        const numPoints = parseInt(numPointsSelect1D.value)
+
+        clearResults1D() // Clear results at the start of every update
+
+        if (isNaN(a) || isNaN(b) || a >= b) {
+          gaussResultSpan1D.textContent = "Please enter a valid interval [a, b] where a < b."
+          return
+        }
+
+        try {
+          // Calculate Gauss integral
+          const { integral, gaussPoints, transformedPoints_f, transformedPoints_g, func_f, func_g } = integrateGauss(funcString1D, a, b, numPoints)
+          gaussResultSpan1D.textContent = integral.toFixed(6)
+
+          // Calculate Exact integral for polynomials
+          const exactIntegral = integratePolynomialExactly(funcString1D, a, b)
+          if (isFinite(exactIntegral)) {
+            exactResultSpan1D.textContent = exactIntegral.toFixed(6)
+            differenceResultSpan1D.textContent = Math.abs(integral - exactIntegral).toExponential(2)
+          } else {
+            exactResultSpan1D.textContent = "N/A (Not a polynomial)"
+            differenceResultSpan1D.textContent = "N/A"
+          }
+
+          let pointsHtml = `<table class="min-w-full border border-gray-300 text-sm">
+            <thead>
+              <tr>
+                <th class="px-6 py-3 bg-gray-100 text-left">Index</th>
+                <th class="px-6 py-3 bg-gray-100 text-left">t<sub>i</sub></th>
+                <th class="px-6 py-3 bg-gray-100 text-left">x<sub>i</sub></th>
+                <th class="px-6 py-3 bg-gray-100 text-left">w<sub>i</sub></th>
+                <th class="px-6 py-3 bg-gray-100 text-left">f(x<sub>i</sub>)</th>
+              </tr>
+            </thead><tbody>`
+
+          for (let i = 0; i < numPoints; i++) {
+            pointsHtml += `<tr>
+					<td class="pl-8">${i + 1}</td>
+					<td>${gaussPoints.t[i].toFixed(6)}</td>
+					<td>${transformedPoints_f[i].x.toFixed(6)}</td>
+					<td>${gaussPoints.w[i].toFixed(6)}</td>
+					<td>${transformedPoints_f[i].y.toFixed(6)}</td>
+				</tr>`
+          }
+
+          pointsHtml += `</tbody></table>`
+          gaussPointsDisplayDiv1D.innerHTML = pointsHtml
+          gaussPointsDisplayDiv1D.innerHTML = pointsHtml
+
+          // Plotting
+          const { yMin: yMinF, yMax: yMaxF } = CanvasPlotter.getYRange(func_f, a, b)
+          originalPlotter1D.clear()
+          originalPlotter1D.setRange(a, b, yMinF, yMaxF)
+          originalPlotter1D.drawAxes("x", "f(x)")
+          originalPlotter1D.drawFunction(func_f, "blue")
+          originalPlotter1D.drawPoints(transformedPoints_f, "red")
+
+          const { yMin: yMinG, yMax: yMaxG } = CanvasPlotter.getYRange(func_g, -1, 1)
+          transformedPlotter1D.clear()
+          transformedPlotter1D.setRange(-1, 1, yMinG, yMaxG)
+          transformedPlotter1D.drawAxes("t", "g(t)")
+          transformedPlotter1D.drawFunction(func_g, "green")
+          transformedPlotter1D.drawPoints(transformedPoints_g, "purple")
+        } catch (error) {
+          console.error("Calculation or plotting error:", error)
+          gaussResultSpan1D.textContent = `Error: ${error.message}`
+        }
+      }
+
+      // Event Listeners
+      calculateButton1D.addEventListener("click", updateDisplay1D)
+      numPointsSelect1D.addEventListener("change", updateDisplay1D)
+      functionInput1D.addEventListener("change", updateDisplay1D)
+      intervalAInput1D.addEventListener("change", updateDisplay1D)
+      intervalBInput1D.addEventListener("change", updateDisplay1D)
+
+      // Initial display on page load
+      functionInput1D.value = generateRandomPolynomial1D()
+      clearResults1D()
+    </script>
+    <script>
+      // Pre-computed Gauss-Legendre points and weights for interval [-1, 1]
+      const gaussPointsAndWeights2D = {
+        1: { t: [0], w: [2] },
+        2: { t: [-1 / Math.sqrt(3), 1 / Math.sqrt(3)], w: [1, 1] },
+        3: { t: [-Math.sqrt(3 / 5), 0, Math.sqrt(3 / 5)], w: [5 / 9, 8 / 9, 5 / 9] },
+        4: {
+          t: [-Math.sqrt((3 + 2 * Math.sqrt(6 / 5)) / 7), -Math.sqrt((3 - 2 * Math.sqrt(6 / 5)) / 7), Math.sqrt((3 - 2 * Math.sqrt(6 / 5)) / 7), Math.sqrt((3 + 2 * Math.sqrt(6 / 5)) / 7)],
+          w: [(18 - Math.sqrt(30)) / 36, (18 + Math.sqrt(30)) / 36, (18 + Math.sqrt(30)) / 36, (18 - Math.sqrt(30)) / 36]
+        }
+      }
+
+      // Function to parse a string expression into a callable function for two variables
+      function parseFunction2D(funcString2D) {
+        try {
+          const parsedNode = math.parse(funcString2D)
+          return (x, y) => {
+            const scope = { x: x, y: y }
+            return parsedNode.evaluate(scope)
+          }
+        } catch (error) {
+          console.error("Error parsing function:", error)
+          return () => NaN
+        }
+      }
+
+      // Function to calculate the exact integral of a polynomial for two variables
+      function integratePolynomialExactly2D(polyString2D, a, b, c, d) {
+        try {
+          // This is a simplified function that assumes separable terms like x^m * y^n
+          // A more robust implementation is complex. This version handles simple polynomial terms.
+          const f = parseFunction2D(polyString2D)
+
+          let exactIntegral2D = 0
+          let terms = math.parse(polyString2D).filter(node => node.type === "OperatorNode" || node.type === "ConstantNode" || node.type === "SymbolNode")
+
+          // This is a simplified approach, a full symbolic integration engine is needed for a generic polynomial
+          // We'll calculate it numerically for simplicity here
+          const exactIntegral2DX = integratePolynomial2D(polyString2D, a, b, "x")
+          const exactIntegral2DY = integratePolynomial2D(polyString2D, c, d, "y")
+
+          // For a separable polynomial f(x,y) = f1(x) * f2(y), this would be (integral f1) * (integral f2)
+          // For f(x,y) = g(x) + h(y), it's (integral g) * (d-c) + (integral h) * (b-a)
+          // We'll calculate it for the form f(x,y) = P(x) + Q(y)
+          const termsX = polyString2D.match(/[+-]?\s*(\d*\s*x\s*\^\s*\d+)\s*|[+-]?\s*(\d*\s*x)\s*|[+-]?\s*\d+\s*(?=\s*[+-]|$)/g) || []
+          const termsY = polyString2D.match(/[+-]?\s*(\d*\s*y\s*\^\s*\d+)\s*|[+-]?\s*(\d*\s*y)\s*|[+-]?\s*\d+\s*(?=\s*[+-]|$)/g) || []
+
+          let polyX = termsX.join("")
+          let polyY = termsY.join("")
+
+          const integralX = integratePolynomial2D(polyX, a, b, "x")
+          const integralY = integratePolynomial2D(polyY, c, d, "y")
+
+          const constantTerm = parseFloat(polyString2D.match(/[+-]?\s*\d+\s*$/))
+
+          let exactResult = 0
+          if (!isNaN(integralX) && !isNaN(integralY)) {
+            // This is a simplified case where f(x,y) = P(x) + Q(y)
+            exactResult = integralX * (d - c) + integralY * (b - a) + (isNaN(constantTerm) ? 0 : constantTerm * (b - a) * (d - c))
+          } else {
+            return NaN
+          }
+
+          return exactResult
+        } catch (error) {
+          console.error("Error calculating exact integral:", error)
+          return NaN
+        }
+      }
+
+      function integratePolynomial2D(polyString2D, a, b, variableName) {
+        const terms = polyString2D
+          .replace(new RegExp(`\\s*${variableName}`, "g"), ` ${variableName}`)
+          .replace(/-/g, "+-")
+          .split("+")
+          .map(t => t.trim())
+          .filter(t => t)
+        let integralAt = function (x) {
+          let sum = 0
+          for (let rawTerm of terms) {
+            let term = rawTerm.replace(/\s+/g, "")
+            if (term === "") continue
+
+            let match = term.match(new RegExp(`^([+-]?\\d*)(${variableName}(?:\\^(\\d+))?)?$`))
+            if (!match) continue
+
+            let coeffStr = match[1]
+            let coeff = coeffStr === "" || coeffStr === "+" ? 1 : coeffStr === "-" ? -1 : parseFloat(coeffStr)
+            let power = match[3] ? parseInt(match[3]) : match[2] ? 1 : 0
+
+            sum += (coeff * Math.pow(x, power + 1)) / (power + 1)
+          }
+          return sum
+        }
+        return integralAt(b) - integralAt(a)
+      }
+
+      // Main integration function for 2D
+      function integrateGauss2D(funcString2D, a, b, c, d, numPointsX, numPointsY) {
+        const pointsX = gaussPointsAndWeights2D[numPointsX]
+        const pointsY = gaussPointsAndWeights2D[numPointsY]
+
+        if (!pointsX || !pointsY) {
+          throw new Error("Gauss points for selected number of points are not defined.")
+        }
+
+        const func_f = parseFunction2D(funcString2D)
+
+        const factorX = (b - a) / 2
+        const offsetX = (b + a) / 2
+        const factorY = (d - c) / 2
+        const offsetY = (d + c) / 2
+
+        let integralSum = 0
+        const evaluationPoints = []
+
+        for (let i = 0; i < numPointsX; i++) {
+          const tx = pointsX.t[i]
+          const wx = pointsX.w[i]
+          const x_i = factorX * tx + offsetX
+
+          for (let j = 0; j < numPointsY; j++) {
+            const ty = pointsY.t[j]
+            const wy = pointsY.w[j]
+            const y_j = factorY * ty + offsetY
+
+            const f_ij = func_f(x_i, y_j)
+            integralSum += wx * wy * f_ij
+
+            evaluationPoints.push({
+              tx: tx,
+              ty: ty,
+              x: x_i,
+              y: y_j,
+              weight: wx * wy,
+              f_xy: f_ij
+            })
+          }
+        }
+
+        const finalIntegral = factorX * factorY * integralSum
+        console.log(finalIntegral)
+        console.log(evaluationPoints)
+
+        return {
+          integral: finalIntegral,
+          points: evaluationPoints
+        }
+      }
+
+      function generateRandomPolynomial2D() {
+        const degreeX = Math.floor(Math.random() * 20) - 10
+        const degreeY = Math.floor(Math.random() * 20) - 10
+        let polynomial = ""
+        for (let i = degreeX; i >= 0; i--) {
+          for (let j = degreeY; j >= 0; j--) {
+            const coeff = Math.floor(Math.random() * 11) - 5
+            if (coeff === 0) continue
+
+            let term = ""
+            if (i > 0) {
+              if (Math.abs(coeff) !== 1) term += Math.abs(coeff)
+              term += i === 1 ? "x" : ` x^${i}`
+            }
+            if (j > 0) {
+              if (i > 0 && Math.abs(coeff) === 1) term += "*"
+              else if (i === 0) {
+                if (Math.abs(coeff) !== 1) term += Math.abs(coeff)
+              }
+              term += j === 1 ? "y" : ` y^${j}`
+            }
+            if (i === 0 && j === 0) {
+              term += Math.abs(coeff)
+            }
+
+            if (polynomial) {
+              polynomial += coeff > 0 ? ` + ${term}` : ` - ${term}`
+            } else {
+              polynomial += coeff > 0 ? term : `-${term}`
+            }
+          }
+        }
+        return polynomial.trim().replace(/\+ -/g, "- ").replace(/  +/g, " ")
+      }
+
+      // UI elements
+
+      const functionInput2D = document.getElementById("functionInput2D")
+      const intervalAInput2D = document.getElementById("intervalA2D")
+      const intervalBInput2D = document.getElementById("intervalB2D")
+      const intervalCInput2D = document.getElementById("intervalC2D")
+      const intervalDInput2D = document.getElementById("intervalD2D")
+      const numPointsXSelect2D = document.getElementById("numPointsX2D")
+      const numPointsYSelect2D = document.getElementById("numPointsY2D")
+      const calculateButton2D = document.getElementById("calculateButton2D")
+      const gaussResultSpan2D = document.getElementById("gaussResult2D")
+      const exactResultSpan2D = document.getElementById("exactResult2D")
+      const differenceResultSpan2D = document.getElementById("differenceResult2D")
+      const gaussPointsDisplayDiv2D = document.getElementById("gaussPointsDisplay2D")
+
+      // Function to clear all result spans
+      function clearResults2D() {
+        gaussResultSpan2D.textContent = ""
+        exactResultSpan2D.textContent = ""
+        differenceResultSpan2D.textContent = ""
+        gaussPointsDisplayDiv2D.innerHTML = ""
+      }
+
+      function updateDisplay2D() {
+        const funcString2D = functionInput2D.value
+        const a = parseFloat(intervalAInput2D.value)
+        const b = parseFloat(intervalBInput2D.value)
+        const c = parseFloat(intervalCInput2D.value)
+        const d = parseFloat(intervalDInput2D.value)
+        const numPointsX = parseInt(numPointsXSelect2D.value)
+        const numPointsY = parseInt(numPointsYSelect2D.value)
+
+        clearResults2D()
+
+        if (isNaN(a) || isNaN(b) || a >= b || isNaN(c) || isNaN(d) || c >= d) {
+          gaussResultSpan2D.textContent = "Please enter a valid rectangular interval."
+          return
+        }
+
+        try {
+          // Calculate Gauss integral
+          const { integral, points } = integrateGauss2D(funcString2D, a, b, c, d, numPointsX, numPointsY)
+          gaussResultSpan2D.textContent = integral.toFixed(6)
+
+          // Calculate Exact integral for a simple polynomial
+          //const exactIntegral2D = integratePolynomialExactly2D(funcString2D, a, b, c, d);
+          const { integral: exactIntegral2D, points: points2 } = integrateGauss2D(funcString2D, a, b, c, d, 4, 4)
+          console.log(exactIntegral2D)
+
+          if (isFinite(exactIntegral2D)) {
+            exactResultSpan2D.textContent = exactIntegral2D.toFixed(6)
+            differenceResultSpan2D.textContent = Math.abs(integral - exactIntegral2D).toExponential(2)
+          } else {
+            exactResultSpan2D.textContent = "N/A (Not a separable polynomial)"
+            differenceResultSpan2D.textContent = "N/A"
+          }
+
+          let pointsHtml = `<table>
+                    <thead>
+                        <tr>
+                            <th>Index</th>
+                            <th>t<sub>x,i</sub></th>
+                            <th>t<sub>y,j</sub></th>
+                            <th>x<sub>i</sub></th>
+                            <th>y<sub>j</sub></th>
+                            <th>Weight</th>
+                            <th>f(x<sub>i</sub>, y<sub>j</sub>)</th>
+                        </tr>
+                    </thead><tbody>`
+
+          points.forEach((p, index) => {
+            pointsHtml += `<tr>
+                        <td>${index + 1}</td>
+                        <td>${p.tx.toFixed(6)}</td>
+                        <td>${p.ty.toFixed(6)}</td>
+                        <td>${p.x.toFixed(6)}</td>
+                        <td>${p.y.toFixed(6)}</td>
+                        <td>${p.weight.toFixed(6)}</td>
+                        <td>${p.f_xy.toFixed(6)}</td>
+                    </tr>`
+          })
+
+          pointsHtml += `</tbody></table>`
+          gaussPointsDisplayDiv2D.innerHTML = pointsHtml
+        } catch (error) {
+          console.error("Calculation error:", error)
+          gaussResultSpan2D.textContent = `Error: ${error.message}`
+        }
+      }
+      function generateRandom2DPolynomial() {
+        const numTerms = Math.floor(Math.random() * 3) + 3 // 3 to 5 terms
+        const powers = new Set()
+        let polynomial = ""
+
+        for (let i = 0; i < numTerms; i++) {
+          let xPower, yPower
+          let key
+          do {
+            xPower = Math.floor(Math.random() * 6) // 0 to 5
+            yPower = Math.floor(Math.random() * 6) // 0 to 5
+            key = `${xPower},${yPower}`
+          } while (powers.has(key))
+          powers.add(key)
+
+          const coeff = Math.floor(Math.random() * 21) - 10 // -10 to 10
+          if (coeff === 0) continue
+
+          let term = ""
+          // Handle the coefficient
+          if (Math.abs(coeff) !== 1 || (xPower === 0 && yPower === 0)) {
+            term += Math.abs(coeff)
+          }
+
+          // Handle the x term
+          if (xPower > 0) {
+            term += xPower === 1 ? "x" : `x^${xPower}`
+          }
+
+          // Handle the y term
+          if (yPower > 0) {
+            // Add '*' if there's already an x term
+            if (xPower > 0) {
+              term += "*"
+            }
+            term += yPower === 1 ? "y" : `y^${yPower}`
+          }
+
+          // If both powers are 0, it's just the constant term
+          if (xPower === 0 && yPower === 0) {
+            term = `${Math.abs(coeff)}`
+          }
+
+          // Add the sign
+          if (i === 0) {
+            polynomial += coeff > 0 ? term : `-${term}`
+          } else {
+            polynomial += coeff > 0 ? ` + ${term}` : ` - ${term}`
+          }
+        }
+        // Clean up any extra spaces
+        return polynomial.trim().replace(/\+ -/g, "- ")
+      }
+      // Event Listeners
+      calculateButton2D.addEventListener("click", updateDisplay2D)
+      numPointsXSelect2D.addEventListener("change", updateDisplay2D)
+      numPointsYSelect2D.addEventListener("change", updateDisplay2D)
+      functionInput2D.addEventListener("change", updateDisplay2D)
+      intervalAInput2D.addEventListener("change", updateDisplay2D)
+      intervalBInput2D.addEventListener("change", updateDisplay2D)
+      intervalCInput2D.addEventListener("change", updateDisplay2D)
+      intervalDInput2D.addEventListener("change", updateDisplay2D)
+
+      // Initial display on page load
+      functionInput2D.value = generateRandom2DPolynomial() // Set a default value
+      clearResults2D()
     </script>
   </body>
 </html>
